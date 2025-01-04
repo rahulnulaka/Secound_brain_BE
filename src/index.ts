@@ -12,7 +12,7 @@ import bodyParser from 'body-parser';
 
 const app = express();
 
-app.use(bodyParser.json());
+
 
 //app.use(cors());
 
@@ -22,7 +22,17 @@ app.use(bodyParser.json());
 //   optionsSuccessStatus: 200, // Some browsers (like Safari) send a 204 by default, which can cause issues.
 // };
 
-app.use(cors({origin: process.env.FRONTEND_URL}));
+app.use(cors({
+  origin: process.env.FRONTEND_URL,  // Ensure this is 'http://localhost:5173' in your case
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
+  allowedHeaders: ['Content-Type', 'Authorization'], // Allow these headers
+  credentials: true,  // Allow cookies and authorization headers
+  optionsSuccessStatus: 200,  // Some browsers (e.g., Safari) may require a 200 status for the OPTIONS preflight
+}));
+
+app.options('*', cors());
+
+
 
 // app.use(express.json());
 // app.use(cookieParser());
@@ -46,12 +56,16 @@ app.use(cors({origin: process.env.FRONTEND_URL}));
   
 // );
 
+app.use(bodyParser.json());
+app.use(cookieParser());
 
 app.get("/", (req, res) => {
     res.send("<h1>Server is in running mode...</h1>");
   });
 
   console.log("hIii helloooo");
+  console.log("hi modda gududv");
+  console.log('FRONTEND_URL:', process.env.FRONTEND_URL);
 
 app.use("/api/v1", userAuthContentsRouter);
 
