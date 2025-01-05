@@ -21,24 +21,59 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const userAuthContents_1 = __importDefault(require("./routes/userAuthContents"));
 const share_1 = __importDefault(require("./routes/share"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
+const body_parser_1 = __importDefault(require("body-parser"));
 const app = (0, express_1.default)();
-app.use(express_1.default.json());
-app.use((0, cookie_parser_1.default)());
+//app.use(cors());
+// const corsOptions = {
+//   origin: 'http://localhost:5173',
+//   methods: 'GET,POST,PUT,DELETE', // Allow specific headers
+//   optionsSuccessStatus: 200, // Some browsers (like Safari) send a 204 by default, which can cause issues.
+// };
 app.use((0, cors_1.default)({
-    origin: ["http://localhost:3000"],
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
+    origin: process.env.FRONTEND_URL, // Ensure this is 'http://localhost:5173' in your case
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
+    allowedHeaders: ['Content-Type', 'Authorization'], // Allow these headers
+    credentials: true, // Allow cookies and authorization headers
+    optionsSuccessStatus: 200, // Some browsers (e.g., Safari) may require a 200 status for the OPTIONS preflight
 }));
+app.options('*', (0, cors_1.default)());
+// app.use(express.json());
+// app.use(cookieParser());
+// const corsOptions = {
+//   origin: 'http://localhost:5175',
+// }
+// app.use(cors(corsOptions));
+// app.use((req, res, next) => { 
+//   res.header("Access-Control-Allow-Origin", "http://localhost:5175"); 
+//   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept"); 
+//   next(); 
+// });
+//app.use(cors({ origin: 'http://localhost:5175' }));
+// app.use(
+//   cors({
+//     origin: ["http://localhost:5175"],
+//     methods: ["GET", "POST", "PUT", "DELETE"],
+//     allowedHeaders: ['Content-Type', 'Authorization'],
+//     credentials: false,
+//   })
+// );
+app.use(body_parser_1.default.json());
+app.use((0, cookie_parser_1.default)());
 app.get("/", (req, res) => {
     res.send("<h1>Server is in running mode...</h1>");
 });
 console.log("hIii helloooo");
+console.log("hi modda gududv");
+console.log('FRONTEND_URL:', process.env.FRONTEND_URL);
 app.use("/api/v1", userAuthContents_1.default);
 app.use("/api/v1/brain", share_1.default);
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            yield mongoose_1.default.connect("mongodb+srv://rahuls988:WigC1wwanfYU1GMB@cluster0.qbaab.mongodb.net/second_brain").then(() => {
+            yield mongoose_1.default.connect(process.env.MONGOOSE_URL, {
+                useNewUrlParser: true,
+                useUnifiedTopology: true,
+            }).then(() => {
                 console.log("Connected to MongoDB");
                 app.listen(3000, () => {
                     console.log("Server is running on port 3000");
